@@ -1,26 +1,30 @@
 import { Injectable } from '@nestjs/common';
-import { CreateCommentDto } from './dto/create-comment.dto';
-import { UpdateCommentDto } from './dto/update-comment.dto';
+import { CommentDTO } from './dto/comments.dto';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { Comments } from './schema/comment.schema';
 
 @Injectable()
 export class CommentsService {
-  create(createCommentDto: CreateCommentDto) {
-    return 'This action adds a new comment';
+  constructor(@InjectModel(Comments.name) private commentModel: Model<Comments>) {}
+  async create(commentDTO: CommentDTO): Promise<Comments> {
+    const comment = new this.commentModel(commentDTO);
+    return await comment.save();
   }
 
-  findAll() {
-    return `This action returns all comments`;
+  async findAll(): Promise<Comments[]> {
+    return await this.commentModel.find().exec();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} comment`;
+  async findOne(id: string): Promise<Comments> {
+    return await this.commentModel.findOne({id: id}).exec();
   }
 
-  update(id: number, updateCommentDto: UpdateCommentDto) {
-    return `This action updates a #${id} comment`;
+  async update(id: string, commentDTO: CommentDTO): Promise<Comments> {
+    return await this.commentModel.findByIdAndUpdate(id, commentDTO);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} comment`;
+  async remove(id: string): Promise<Comments> {
+    return await this.commentModel.findByIdAndRemove(id);
   }
 }
