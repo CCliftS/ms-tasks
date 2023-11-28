@@ -11,13 +11,19 @@ export class TasksController {
     return this.tasksService.create(taskDTO);
   }
 
-  /*
-    Falta poner que se va  actualizar
-  */
+  @Post('updateDescription')
+  updateDescription(@Body('id') id: string, newDescription: string) {
+    return this.tasksService.updateDescription(id, newDescription);
+  }
+  
+  @Post('updateName')
+  updateName(@Body('id') id: string, newName: string) {
+    return this.tasksService.updateName(id, newName);
+  }
  
   @Post('updateTask')
-  update(@Body('id') id: string, taskDTO: TaskDTO) {
-    return this.tasksService.update(id, taskDTO);
+  update(@Body('id') id: string, newStatus: string) {
+    return this.tasksService.updateStatus(id, newStatus);
   }
 
   @Get('findAllTasks')

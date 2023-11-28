@@ -22,8 +22,16 @@ export class TasksService {
     return await this.taskModel.findOne({id: id}).exec();
   }
 
-  async update(id: string, taskDTO: TaskDTO): Promise<Task> {
-    return await this.taskModel.findByIdAndUpdate(id, taskDTO);
+  async updateStatus(id: string, newStatus: string): Promise<Task> {
+    return await this.taskModel.findOneAndUpdate({id: id}, {status: newStatus}, {new: true});
+  }
+
+  async updateDescription(id: string, newDescription: string): Promise<Task> {
+    return await this.taskModel.findOneAndUpdate({id: id}, {description: newDescription}, {new: true});
+  }
+
+  async updateName(id: string, newName: string): Promise<Task> {
+    return await this.taskModel.findOneAndUpdate({id: id}, {name: newName}, {new: true});
   }
 
   async remove(id: string): Promise<Task> {
