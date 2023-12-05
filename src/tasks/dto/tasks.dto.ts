@@ -3,10 +3,6 @@ import { IsNotEmpty, IsString } from "class-validator";
 export class TaskDTO{
     @IsString()
     @IsNotEmpty()
-    id: string;
-
-    @IsString()
-    @IsNotEmpty()
     name: string;
 
     @IsString()
@@ -24,4 +20,10 @@ export class TaskDTO{
     @IsString()
     @IsNotEmpty()
     id_project: string;
+
+    @IsString()
+    start_date: Date;
+
+    @IsString()
+    finish_date: Date;
 }
