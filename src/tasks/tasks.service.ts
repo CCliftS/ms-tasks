@@ -6,19 +6,34 @@ import { InjectModel } from '@nestjs/mongoose';
 import axios from 'axios';
 
 const GetTeam = async (idTeam: string) => {
+  console.log(idTeam);
   try {
-    const response = axios.get(`${process.env.MS_TEAMS}/Teams/findTeamById/'${idTeam}`);
+    const response = axios.get(`${process.env.MS_TEAMS}/Teams/findTeamById/${idTeam}`);
     return response;
   } catch (error) {
+    console.log("TEAMS");
+    console.log(error);
+  }
+};
+
+const GetUser = async (email: string) => {
+  console.log(email);
+  try {
+    const response = axios.get(`${process.env.MS_USERS}/user/data/${email}`);
+    return response;
+  } catch (error) {
+    console.log("USERS");
     console.log(error);
   }
 };
 
 const GetProject = async (idProject: string) => {
+  console.log(idProject);
   try {
-    const response = axios.get(`${process.env.MS_TEAMS}/Project/findOneProject/'${idProject}`);
+    const response = axios.get(`${process.env.MS_TEAMS}/Project/findOneProject/${idProject}`);
     return response;
   } catch (error) {
+    console.log("PROJECTS");
     console.log(error);
   }
 };
@@ -31,8 +46,12 @@ export class TasksService {
 
   async create(taskDTO: TaskDTO): Promise<Task> {
     const Team = await GetTeam(taskDTO.id_team);
+    console.log(Team);
     const Project = await GetProject(taskDTO.id_project);
-    if (Team && Project) {
+    console.log(Project);
+    const User = await GetUser(taskDTO.email_user);
+    console.log(User);
+    if (Team && Project && User) {
       const task = new this.taskModel(taskDTO);
       return await task.save();
     }else{
