@@ -36,6 +36,11 @@ export class TasksController {
     return this.tasksService.findOne(id);
   }
 
+  @Get('findTaskByProject/:id')
+  findTaskByProject(@Param('id') id: string) {
+    return this.tasksService.getProjectTasksByStatus(id);
+  }
+
   @Delete('removeTask/:id')
   remove(@Param('id') id: string) {
     return this.tasksService.remove(id);

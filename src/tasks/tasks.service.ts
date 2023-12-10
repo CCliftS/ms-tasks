@@ -46,11 +46,8 @@ export class TasksService {
 
   async create(taskDTO: TaskDTO): Promise<Task> {
     const Team = await GetTeam(taskDTO.id_team);
-    console.log(Team);
     const Project = await GetProject(taskDTO.id_project);
-    console.log(Project);
     const User = await GetUser(taskDTO.email_user);
-    console.log(User);
     if (Team && Project && User) {
       const task = new this.taskModel(taskDTO);
       return await task.save();
@@ -100,5 +97,15 @@ export class TasksService {
 
   async remove(id: string): Promise<Task> {
     return await this.taskModel.findByIdAndRemove(id);
+  }
+
+  async getProjectTasksByStatus(idProject: string): Promise<Task[][]>{
+    const pendiente = new Array();
+    const enProceso = new Array();
+    const terminado = new Array();
+    pendiente.push(await this.taskModel.find({id_project: idProject, status: 'Pendiente'}));
+    enProceso.push(await this.taskModel.find({id_project: idProject, status: 'En proceso'}));
+    terminado.push(await this.taskModel.find({id_project: idProject, status: 'Terminado'}));
+    return [pendiente, enProceso, terminado];
   }
 }
