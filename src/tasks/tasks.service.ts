@@ -6,23 +6,19 @@ import { InjectModel } from '@nestjs/mongoose';
 import axios from 'axios';
 
 const GetTeam = async (idTeam: string) => {
-  console.log(idTeam);
   try {
     const response = axios.get(`${process.env.MS_TEAMS}/Teams/findTeamById/${idTeam}`);
     return response;
   } catch (error) {
-    console.log("TEAMS");
     console.log(error);
   }
 };
 
 const GetUser = async (email: string) => {
-  console.log(email);
   try {
     const response = axios.get(`${process.env.MS_USERS}/user/data/${email}`);
     return response;
   } catch (error) {
-    console.log("USERS");
     console.log(error);
   }
 };
@@ -33,7 +29,6 @@ const GetProject = async (idProject: string) => {
     const response = axios.get(`${process.env.MS_TEAMS}/Project/findOneProject/${idProject}`);
     return response;
   } catch (error) {
-    console.log("PROJECTS");
     console.log(error);
   }
 };
@@ -107,5 +102,32 @@ export class TasksService {
     enProceso.push(await this.taskModel.find({id_project: idProject, status: 'En proceso'}));
     terminado.push(await this.taskModel.find({id_project: idProject, status: 'Terminado'}));
     return [pendiente, enProceso, terminado];
+  }
+
+  async getTaskByUser(email: string): Promise<Task[]>{
+    if(GetUser(email)){
+      return await this.taskModel.find({email_user: email});
+    }
+    else{
+      throw new NotFoundException('User not found');
+    }
+  }
+
+  async getTaskByTeam(idTeam: string): Promise<Task[]>{
+    if(GetTeam(idTeam)){
+      return await this.taskModel.find({id_team: idTeam});
+    }
+    else{
+      throw new NotFoundException('Team not found');
+    }
+  }
+
+  async getTaskByProject(idProject: string): Promise<Task[]>{
+    if(GetProject(idProject)){
+      return await this.taskModel.find({id_project: idProject});
+    }
+    else{
+      throw new NotFoundException('Project not found');
+    }
   }
 }

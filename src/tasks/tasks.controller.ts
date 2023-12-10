@@ -36,9 +36,24 @@ export class TasksController {
     return this.tasksService.findOne(id);
   }
 
+  @Get('getProjectTasksByStatus/:id')
+  getProjectTasksByStatus(@Param('id') id: string) {
+    return this.tasksService.getProjectTasksByStatus(id);
+  }
+
+  @Get('findTaskByUser/:email')
+  findTaskByUser(@Param('email') email: string) {
+    return this.tasksService.getTaskByUser(email);
+  }
+
+  @Get('findTaskByTeam/:id')
+  findTaskByTeam(@Param('id') id: string) {
+    return this.tasksService.getTaskByTeam(id);
+  }
+
   @Get('findTaskByProject/:id')
   findTaskByProject(@Param('id') id: string) {
-    return this.tasksService.getProjectTasksByStatus(id);
+    return this.tasksService.getTaskByProject(id);
   }
 
   @Delete('removeTask/:id')
