@@ -37,7 +37,7 @@ const GetProject = async (idProject: string) => {
 
 export class TasksService {
   constructor(@InjectModel(Task.name) private taskModel: Model<Task>,
-  ) {}
+  ) { }
 
   async create(taskDTO: TaskDTO): Promise<Task> {
     const Team = await GetTeam(taskDTO.id_team);
@@ -46,87 +46,91 @@ export class TasksService {
     if (Team && Project && User) {
       const task = new this.taskModel(taskDTO);
       return await task.save();
-    }else{
+    } else {
       throw new NotFoundException('Team or Project not found');
     }
   }
 
-  async findAll():Promise<Task[]> {
+  async findAll(): Promise<Task[]> {
     return await this.taskModel.find().exec();
   }
 
   async findOne(id: string): Promise<Task> {
-    return await this.taskModel.findOne({id: id}).exec();
+    return await this.taskModel.findOne({ _id: id }).exec();
   }
 
   async updateStatus(id: string, newStatus: string): Promise<Task> {
-    if(newStatus != 'to do' && newStatus != 'doing' && newStatus != 'done') throw new NotFoundException('Status not found');
-    if(this.taskModel.findById(id)){
-      return await this.taskModel.findOneAndUpdate({id: id}, {status: newStatus}, {new: true});
+    if (newStatus != 'to do' && newStatus != 'doing' && newStatus != 'done') throw new NotFoundException('Status not found');
+    if (this.taskModel.findById(id)) {
+      return await this.taskModel.findOneAndUpdate({ id: id }, { status: newStatus }, { new: true });
     }
-    else{
+    else {
       throw new NotFoundException('Task not found');
     }
   }
 
   async updateDescription(id: string, newDescription: string): Promise<Task> {
-    if(newDescription.length > 500) throw new NotFoundException('Description too long');
-    if(this.taskModel.findById(id)) {
-      return await this.taskModel.findOneAndUpdate({id: id}, {description: newDescription}, {new: true});
+    if (newDescription.length > 500) throw new NotFoundException('Description too long');
+    if (this.taskModel.findById(id)) {
+      return await this.taskModel.findOneAndUpdate({ id: id }, { description: newDescription }, { new: true });
     }
-    else{
+    else {
       throw new NotFoundException('Task not found');
     }
   }
 
   async updateName(id: string, newName: string): Promise<Task> {
 
-    if(this.taskModel.findById(id)) {
-      return await this.taskModel.findOneAndUpdate({id: id}, {name: newName}, {new: true});
+    if (this.taskModel.findById(id)) {
+      return await this.taskModel.findOneAndUpdate({ id: id }, { name: newName }, { new: true });
     }
-    else{
+    else {
       throw new NotFoundException('Task not found');
     }
-    
+
   }
 
   async remove(id: string): Promise<Task> {
     return await this.taskModel.findByIdAndRemove(id);
   }
 
-  async getProjectTasksByStatus(idProject: string): Promise<{pendiente: Task[], enProceso: Task[], terminado: Task[]}>{
-    const pendiente = new Array();
-    const enProceso = new Array();
-    const terminado = new Array();
-    pendiente.push(await this.taskModel.find({id_project: idProject, status: 'Pendiente'}));
-    enProceso.push(await this.taskModel.find({id_project: idProject, status: 'En proceso'}));
-    terminado.push(await this.taskModel.find({id_project: idProject, status: 'Terminado'}));
-    return { pendiente, enProceso, terminado };
+  async getProjectTasks(idProject: string): Promise<{ taskId: string[], taskDescription: string[], taskEmailUser: string[], taskFinishDate: Date[], taskIdProject: string[], taskIdTeam: string[], taskName: string[], taskStartDate: Date[], taskStatus: string[] }> {
+    const tasks = await this.taskModel.find({ id_project: idProject });
+    const taskId = tasks.map(task => task.id);
+    const taskDescription = tasks.map(task => task.description);
+    const taskEmailUser = tasks.map(task => task.email_user);
+    const taskFinishDate = tasks.map(task => task.finish_date);
+    const taskIdProject = tasks.map(task => task.id_project);
+    const taskIdTeam = tasks.map(task => task.id_team);
+    const taskName = tasks.map(task => task.name);
+    const taskStartDate = tasks.map(task => task.start_date);
+    const taskStatus = tasks.map(task => task.status);
+    return { taskId, taskDescription, taskEmailUser, taskFinishDate, taskIdProject, taskIdTeam, taskName, taskStartDate, taskStatus };
   }
 
-  async getTaskByUser(email: string): Promise<Task[]>{
-    if(GetUser(email)){
-      return await this.taskModel.find({email_user: email});
+  async getTaskByUser(email: string): Promise<Task[]> {
+    if (GetUser(email)) {
+      return await this.taskModel.find({ email_user: email });
     }
-    else{
+    else {
       throw new NotFoundException('User not found');
     }
   }
 
-  async getTaskByTeam(idTeam: string): Promise<Task[]>{
-    if(GetTeam(idTeam)){
-      return await this.taskModel.find({id_team: idTeam});
+  async getTaskByTeam(idTeam: string): Promise<Task[]> {
+    if (GetTeam(idTeam)) {
+      return await this.taskModel.find({ id_team: idTeam });
     }
-    else{
+    else {
       throw new NotFoundException('Team not found');
     }
   }
 
-  async getTaskByProject(idProject: string): Promise<Task[]>{
-    if(GetProject(idProject)){
-      return await this.taskModel.find({id_project: idProject});
+  async getTaskByProject(idProject: string): Promise<Task[]> {
+    if (GetProject(idProject)) {
+      return await this.taskModel.find({ id_project: idProject });
     }
-    else{
+    else {
       throw new NotFoundException('Project not found');
     }
   }
