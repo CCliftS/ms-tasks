@@ -100,7 +100,7 @@ export class TasksService {
 
   }
 
-  async updateDate(id: string, newDate: Date): Promise<Task> {
+  async updateFinishDate(id: string, newDate: Date): Promise<Task> {
     if (this.taskModel.findById(id)) {
       return await this.taskModel.findOneAndUpdate({ _id: id }, { finish_date: newDate }, { new: true });
     }

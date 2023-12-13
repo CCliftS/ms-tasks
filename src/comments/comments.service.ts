@@ -23,12 +23,14 @@ export class CommentsService {
     return await this.commentModel.findOne({id: id}).exec();
   }
 
-  async update(id: string, commentDTO: CommentDTO): Promise<Comments> {
-    
-    if(this.taskService.findOne(commentDTO.id_task)){
-      return await this.commentModel.findByIdAndUpdate(id, commentDTO);
+  async updateComment(id: string, Newcomment: string): Promise<Comments> {
+    if(this.taskService.findOne(id)){
+      return await this.commentModel.findByIdAndUpdate(id, {comment: Newcomment}, {new: true});
     }
-    
+  }
+
+  async getCommentsByTask(id_task: string): Promise<Comments[]> {
+    return await this.commentModel.find({id_task: id_task}).exec();
   }
 
   async remove(id: string): Promise<Comments> {

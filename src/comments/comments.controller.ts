@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 import { CommentsService } from './comments.service';
 import { CommentDTO } from './dto/comments.dto';
 
@@ -21,13 +21,9 @@ export class CommentsController {
     return this.commentsService.findOne(id);
   }
 
-  /*
-  Falta poner que se va  actualizar
-  */
-
-  @Post('updateComment')
-  update(@Body('id') id: string, commentDTO: CommentDTO) {
-    return this.commentsService.update(id, commentDTO);
+  @Put('updateComment/:id')
+  update(@Param('id') id: string, @Body('newcomment') newcomment: string) {
+    return this.commentsService.updateComment(id, newcomment);
   }
 
   @Delete('removeComment/:id')
