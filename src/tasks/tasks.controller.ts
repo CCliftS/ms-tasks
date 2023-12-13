@@ -4,7 +4,7 @@ import { TaskDTO } from './dto/tasks.dto';
 
 @Controller('Tasks')
 export class TasksController {
-  constructor(private readonly tasksService: TasksService) {}
+  constructor(private readonly tasksService: TasksService) { }
 
   @Post('createTask')
   create(@Body() taskDTO: TaskDTO) {
@@ -15,12 +15,12 @@ export class TasksController {
   updateDescription(@Body('id') id: string, newDescription: string) {
     return this.tasksService.updateDescription(id, newDescription);
   }
-  
+
   @Post('updateName')
   updateName(@Body('id') id: string, newName: string) {
     return this.tasksService.updateName(id, newName);
   }
- 
+
   @Post('updateTask')
   update(@Body('id') id: string, newStatus: string) {
     return this.tasksService.updateStatus(id, newStatus);
@@ -36,9 +36,9 @@ export class TasksController {
     return this.tasksService.findOne(id);
   }
 
-  @Get('getProjectTasksByStatus/:id')
+  @Get('getProjectTasks/:id')
   getProjectTasksByStatus(@Param('id') id: string) {
-    return this.tasksService.getProjectTasksByStatus(id);
+    return this.tasksService.getProjectTasks(id);
   }
 
   @Get('findTaskByUser/:email')
