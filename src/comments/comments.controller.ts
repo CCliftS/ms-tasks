@@ -4,7 +4,7 @@ import { CommentDTO } from './dto/comments.dto';
 
 @Controller('Comments')
 export class CommentsController {
-  constructor(private readonly commentsService: CommentsService) {}
+  constructor(private readonly commentsService: CommentsService) { }
 
   @Post('createComment')
   create(@Body() commentDTO: CommentDTO) {
@@ -20,6 +20,10 @@ export class CommentsController {
   findOne(@Param('id') id: string) {
     return this.commentsService.findOne(id);
   }
+  @Get('getCommentsByTask/:id_task')
+  getCommentsByTask(@Param('id_task') id_task: string) {
+    return this.commentsService.getCommentsByTask(id_task);
+  }
 
   @Put('updateComment/:id')
   update(@Param('id') id: string, @Body('newcomment') newcomment: string) {
@@ -30,4 +34,5 @@ export class CommentsController {
   remove(@Param('id') id: string) {
     return this.commentsService.remove(id);
   }
+
 }

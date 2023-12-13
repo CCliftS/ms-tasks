@@ -1,13 +1,14 @@
-import { Prop, SchemaFactory } from "@nestjs/mongoose";
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument } from "mongoose";
 
 export type CommentDocument = HydratedDocument<Comments>;
+@Schema()
 
 export class Comments {
-    @Prop({required: true})
+    @Prop({ required: true })
     id_task: string;
 
-    @Prop({required: true})
+    @Prop({ required: true })
     comment: string;
 }
 
