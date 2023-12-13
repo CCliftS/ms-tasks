@@ -11,12 +11,8 @@ export class CommentsService {
   private readonly taskService: TasksService
 
   async create(commentDTO: CommentDTO): Promise<Comments> {
-  
-    if(this.taskService.findOne(commentDTO.id_task)){
-      const comment = new this.commentModel(commentDTO);
-      return await comment.save();
-    }
-
+    const comment = new this.commentModel(commentDTO);
+    return await comment.save();
   }
 
   async findAll(): Promise<Comments[]> {

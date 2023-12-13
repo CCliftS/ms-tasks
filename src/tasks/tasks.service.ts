@@ -33,6 +33,16 @@ const GetProject = async (idProject: string) => {
   }
 };
 
+const GetMember = async (email: string, idTeam: string) => {
+  try{
+    const response = axios.get(`${process.env.MS_TEAMS}/Member/getMemberByEmailAndTeam/${email}/${idTeam}`);
+    return response;
+  }
+  catch(error){
+    console.log(error);
+  }
+};
+
 @Injectable()
 
 export class TasksService {
@@ -62,7 +72,7 @@ export class TasksService {
   async updateStatus(id: string, newStatus: string): Promise<Task> {
     if (newStatus != 'to do' && newStatus != 'doing' && newStatus != 'done') throw new NotFoundException('Status not found');
     if (this.taskModel.findById(id)) {
-      return await this.taskModel.findOneAndUpdate({ id: id }, { status: newStatus }, { new: true });
+      return await this.taskModel.findOneAndUpdate({ _id: id }, { status: newStatus }, { new: true });
     }
     else {
       throw new NotFoundException('Task not found');
@@ -72,7 +82,7 @@ export class TasksService {
   async updateDescription(id: string, newDescription: string): Promise<Task> {
     if (newDescription.length > 500) throw new NotFoundException('Description too long');
     if (this.taskModel.findById(id)) {
-      return await this.taskModel.findOneAndUpdate({ id: id }, { description: newDescription }, { new: true });
+      return await this.taskModel.findOneAndUpdate({ _id: id }, { description: newDescription }, { new: true });
     }
     else {
       throw new NotFoundException('Task not found');
@@ -82,13 +92,32 @@ export class TasksService {
   async updateName(id: string, newName: string): Promise<Task> {
 
     if (this.taskModel.findById(id)) {
-      return await this.taskModel.findOneAndUpdate({ id: id }, { name: newName }, { new: true });
+      return await this.taskModel.findOneAndUpdate({ _id: id }, { name: newName }, { new: true });
     }
     else {
       throw new NotFoundException('Task not found');
     }
 
   }
+
+  async updateDate(id: string, newDate: Date): Promise<Task> {
+    if (this.taskModel.findById(id)) {
+      return await this.taskModel.findOneAndUpdate({ _id: id }, { finish_date: newDate }, { new: true });
+    }
+    else {
+      throw new NotFoundException('Task not found');
+    }
+  }
+
+  async updateTeamAndEmailUser(id: string, newTeam: string, newEmailUser: string): Promise<Task> {
+    if(this.taskModel.findById(id) && GetMember(newEmailUser, newTeam)){
+      return await this.taskModel.findOneAndUpdate({ _id: id }, { id_team: newTeam },{ new: true });
+    }
+    else{
+      throw new NotFoundException('Task not found');
+    }
+  }
+
 
   async remove(id: string): Promise<Task> {
     return await this.taskModel.findByIdAndRemove(id);

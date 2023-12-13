@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { CommentsService } from './comments.service';
 import { CommentDTO } from './dto/comments.dto';
 
-@Controller()
+@Controller('Comments')
 export class CommentsController {
   constructor(private readonly commentsService: CommentsService) {}
 
