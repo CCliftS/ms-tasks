@@ -9,6 +9,9 @@ export class Comments {
     id_task: string;
 
     @Prop({ required: true })
+    email_user: string;
+
+    @Prop({ required: true })
     comment: string;
 }
 

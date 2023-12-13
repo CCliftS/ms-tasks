@@ -61,11 +61,6 @@ export class TasksController {
     return this.tasksService.getTaskByTeam(id);
   }
 
-  @Get('findTaskByProject/:id')
-  findTaskByProject(@Param('id') id: string) {
-    return this.tasksService.getTaskByProject(id);
-  }
-
   @Delete('removeTask/:id')
   remove(@Param('id') id: string) {
     return this.tasksService.remove(id);

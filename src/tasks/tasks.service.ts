@@ -118,7 +118,6 @@ export class TasksService {
     }
   }
 
-
   async remove(id: string): Promise<Task> {
     return await this.taskModel.findByIdAndRemove(id);
   }
@@ -137,30 +136,41 @@ export class TasksService {
     return { taskId, taskDescription, taskEmailUser, taskFinishDate, taskIdProject, taskIdTeam, taskName, taskStartDate, taskStatus };
   }
 
-  async getTaskByUser(email: string): Promise<Task[]> {
+  async getTaskByUser(email: string): Promise<{ taskId: string[], taskDescription: string[], taskEmailUser: string[], taskFinishDate: Date[], taskIdProject: string[], taskIdTeam: string[], taskName: string[], taskStartDate: Date[], taskStatus: string[] }> {
     if (GetUser(email)) {
-      return await this.taskModel.find({ email_user: email });
+      const tasks = await this.taskModel.find({ email_user: email });  
+      const taskId = tasks.map(task => task.id);
+      const taskDescription = tasks.map(task => task.description);
+      const taskEmailUser = tasks.map(task => task.email_user);
+      const taskFinishDate = tasks.map(task => task.finish_date);
+      const taskIdProject = tasks.map(task => task.id_project);
+      const taskIdTeam = tasks.map(task => task.id_team);
+      const taskName = tasks.map(task => task.name);
+      const taskStartDate = tasks.map(task => task.start_date);
+      const taskStatus = tasks.map(task => task.status);
+      return { taskId, taskDescription, taskEmailUser, taskFinishDate, taskIdProject, taskIdTeam, taskName, taskStartDate, taskStatus };
     }
     else {
       throw new NotFoundException('User not found');
     }
   }
 
-  async getTaskByTeam(idTeam: string): Promise<Task[]> {
+  async getTaskByTeam(idTeam: string): Promise<{ taskId: string[], taskDescription: string[], taskEmailUser: string[], taskFinishDate: Date[], taskIdProject: string[], taskIdTeam: string[], taskName: string[], taskStartDate: Date[], taskStatus: string[] }> {
     if (GetTeam(idTeam)) {
-      return await this.taskModel.find({ id_team: idTeam });
+      const tasks = await this.taskModel.find({ id_team: idTeam });
+      const taskId = tasks.map(task => task.id);
+      const taskDescription = tasks.map(task => task.description);
+      const taskEmailUser = tasks.map(task => task.email_user);
+      const taskFinishDate = tasks.map(task => task.finish_date);
+      const taskIdProject = tasks.map(task => task.id_project);
+      const taskIdTeam = tasks.map(task => task.id_team);
+      const taskName = tasks.map(task => task.name);
+      const taskStartDate = tasks.map(task => task.start_date);
+      const taskStatus = tasks.map(task => task.status);
+      return { taskId, taskDescription, taskEmailUser, taskFinishDate, taskIdProject, taskIdTeam, taskName, taskStartDate, taskStatus };
     }
     else {
       throw new NotFoundException('Team not found');
-    }
-  }
-
-  async getTaskByProject(idProject: string): Promise<Task[]> {
-    if (GetProject(idProject)) {
-      return await this.taskModel.find({ id_project: idProject });
-    }
-    else {
-      throw new NotFoundException('Project not found');
     }
   }
 }

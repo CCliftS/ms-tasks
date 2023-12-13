@@ -7,5 +7,9 @@ export class CommentDTO{
 
     @IsString()
     @IsNotEmpty()
+    email_user: string;
+
+    @IsString()
+    @IsNotEmpty()
     comment: string;
 }

@@ -29,8 +29,12 @@ export class CommentsService {
     }
   }
 
-  async getCommentsByTask(id_task: string): Promise<Comments[]> {
-    return await this.commentModel.find({id_task: id_task}).exec();
+  async getCommentsByTask(id_task: string): Promise<{ commentIdTask:string[], commentEmailUser: string[], commentComment: string[] }> {
+    const comments = await this.commentModel.find({id_task: id_task}).exec();
+    const commentIdTask = comments.map(comments => comments.id_task);
+    const commentEmailUser = comments.map(comments => comments.email_user);
+    const commentComment = comments.map(comments => comments.comment);
+    return { commentIdTask, commentEmailUser, commentComment }
   }
 
   async remove(id: string): Promise<Comments> {
