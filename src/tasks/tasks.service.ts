@@ -119,7 +119,7 @@ export class TasksService {
 
   async updateStartDate(id: string, newDate: Date): Promise<Task> {
     const task = await this.taskModel.findById(id);
-    if (task && (new Date(newDate) >= new Date(task.start_date))) {
+    if (task && (new Date(newDate) <= new Date(task.start_date))) {
       return await this.taskModel.findOneAndUpdate({ _id: id }, { start_date: newDate }, { new: true });
     }
     else {
