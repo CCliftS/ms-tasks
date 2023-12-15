@@ -33,11 +33,11 @@ const GetProject = async (idProject: string) => {
 };
 
 const GetMember = async (email: string, idTeam: string) => {
-  try{
+  try {
     const response = axios.get(`${process.env.MS_TEAMS}/Member/getMemberByEmailAndTeam/${email}/${idTeam}`);
     return response;
   }
-  catch(error){
+  catch (error) {
     console.log(error);
   }
 };
@@ -118,10 +118,10 @@ export class TasksService {
   }
 
   async updateTeamAndEmailUser(id: string, newTeam: string, newEmailUser: string): Promise<Task> {
-    if(this.taskModel.findById(id) && GetMember(newEmailUser, newTeam)){
-      return await this.taskModel.findOneAndUpdate({ _id: id }, { id_team: newTeam },{ new: true });
+    if (this.taskModel.findById(id) && GetMember(newEmailUser, newTeam)) {
+      return await this.taskModel.findOneAndUpdate({ _id: id }, { id_team: newTeam }, { new: true });
     }
-    else{
+    else {
       throw new NotFoundException('Task not found');
     }
   }
@@ -146,7 +146,7 @@ export class TasksService {
 
   async getTaskByUser(email: string): Promise<{ taskId: string[], taskDescription: string[], taskEmailUser: string[], taskFinishDate: Date[], taskIdProject: string[], taskIdTeam: string[], taskName: string[], taskStartDate: Date[], taskStatus: string[] }> {
     if (GetUser(email)) {
-      const tasks = await this.taskModel.find({ email_user: email });  
+      const tasks = await this.taskModel.find({ email_user: email });
       const taskId = tasks.map(task => task.id);
       const taskDescription = tasks.map(task => task.description);
       const taskEmailUser = tasks.map(task => task.email_user);
