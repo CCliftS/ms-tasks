@@ -24,7 +24,6 @@ const GetUser = async (email: string) => {
 };
 
 const GetProject = async (idProject: string) => {
-  console.log(idProject);
   try {
     const response = axios.get(`${process.env.MS_TEAMS}/Project/findOneProject/${idProject}`);
     return response;
@@ -50,14 +49,12 @@ export class TasksService {
   ) { }
 
   async create(taskDTO: TaskDTO): Promise<Task> {
-    const Team = await GetTeam(taskDTO.id_team);
-    const Project = await GetProject(taskDTO.id_project);
-    const User = await GetUser(taskDTO.email_user);
-    if (Team && Project && User) {
+    console.log(taskDTO.email_user);
+    if (GetTeam(taskDTO.id_team) && GetProject(taskDTO.id_project) && GetUser(taskDTO.email_user) && taskDTO.finish_date > taskDTO.start_date) {
       const task = new this.taskModel(taskDTO);
       return await task.save();
     } else {
-      throw new NotFoundException('Team or Project not found');
+      throw new NotFoundException('No fue posible crear la tarea');
     }
   }
 
@@ -70,7 +67,7 @@ export class TasksService {
   }
 
   async updateStatus(id: string, newStatus: string): Promise<Task> {
-    if (newStatus != 'to do' && newStatus != 'doing' && newStatus != 'done') throw new NotFoundException('Status not found');
+    if (newStatus != 'Pendiente' && newStatus != 'Proceso' && newStatus != 'Terminado') throw new NotFoundException('Status not found');
     if (this.taskModel.findById(id)) {
       return await this.taskModel.findOneAndUpdate({ _id: id }, { status: newStatus }, { new: true });
     }
@@ -101,8 +98,19 @@ export class TasksService {
   }
 
   async updateFinishDate(id: string, newDate: Date): Promise<Task> {
-    if (this.taskModel.findById(id)) {
+    const task = await this.taskModel.findById(id);
+    if (task && newDate > task.start_date) {
       return await this.taskModel.findOneAndUpdate({ _id: id }, { finish_date: newDate }, { new: true });
+    }
+    else {
+      throw new NotFoundException('Task not found');
+    }
+  }
+
+  async updateStartDate(id: string, newDate: Date): Promise<Task> {
+    const task = await this.taskModel.findById(id);
+    if (task && newDate < task.finish_date) {
+      return await this.taskModel.findOneAndUpdate({ _id: id }, { start_date: newDate }, { new: true });
     }
     else {
       throw new NotFoundException('Task not found');
