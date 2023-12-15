@@ -70,4 +70,14 @@ export class TasksController {
   remove(@Param('id') id: string) {
     return this.tasksService.remove(id);
   }
+
+  @Delete('deleteUserTasks/:email')
+  deleteUserTasks(@Param('email') email: string) {
+    return this.tasksService.deleteUserTasks(email);
+  }
+
+  @Delete('deleteTeamTasks/:id')
+  deleteTeamTasks(@Param('id') id: string) {
+    return this.tasksService.deleteTeamTasks(id);
+  }
 }

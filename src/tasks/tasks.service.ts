@@ -4,6 +4,7 @@ import { Task } from './schema/task.schema';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import axios from 'axios';
+import { DeleteResult } from 'mongodb';
 
 const GetTeam = async (idTeam: string) => {
   try {
@@ -67,14 +68,6 @@ export class TasksService {
     }
   }
 
-  async findAll(): Promise<Task[]> {
-    return await this.taskModel.find().exec();
-  }
-
-  async findOne(id: string): Promise<Task> {
-    return await this.taskModel.findOne({ _id: id }).exec();
-  }
-
   async updateStatus(id: string, newStatus: string): Promise<Task> {
     if (newStatus != 'Pendiente' && newStatus != 'Proceso' && newStatus != 'Terminado') throw new NotFoundException('Status not found');
     if (this.taskModel.findById(id)) {
@@ -136,8 +129,12 @@ export class TasksService {
     }
   }
 
-  async remove(id: string): Promise<Task> {
-    return await this.taskModel.findByIdAndRemove(id);
+  async findAll(): Promise<Task[]> {
+    return await this.taskModel.find().exec();
+  }
+
+  async findOne(id: string): Promise<Task> {
+    return await this.taskModel.findOne({ _id: id }).exec();
   }
 
   async getProjectTasks(idProject: string): Promise<{ taskId: string[], taskDescription: string[], taskEmailUser: string[], taskFinishDate: Date[], taskIdProject: string[], taskIdTeam: string[], taskTeamName: string[], taskName: string[], taskStartDate: Date[], taskStatus: string[] }> {
@@ -196,6 +193,22 @@ export class TasksService {
     }
     else {
       throw new NotFoundException('Team not found');
+    }
+  }
+
+  async remove(id: string): Promise<Task> {
+    return await this.taskModel.findByIdAndRemove(id);
+  }
+
+  async deleteUserTasks(email: string): Promise<DeleteResult> {
+    if (this.taskModel.find({ email_user: email })){
+      return await this.taskModel.deleteMany({ email_user: email });
+    }
+  }
+
+  async deleteTeamTasks(idTeam: string): Promise<void> {
+    if (this.taskModel.find({ id_team: idTeam })){
+      await this.taskModel.deleteMany({ id_team: idTeam });
     }
   }
 }
