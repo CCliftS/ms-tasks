@@ -196,8 +196,20 @@ export class TasksService {
     }
   }
 
+  async getTasksTeam(idTeam: string): Promise<Task[]> {
+    return await this.taskModel.find({ id_team: idTeam });
+  }
+
   async remove(id: string): Promise<Task> {
-    return await this.taskModel.findByIdAndRemove(id);
+    try {
+      const result = await this.taskModel.findOneAndDelete({ _id: id });
+      if (!result) {
+        console.log(`No task found with id: ${id}`);
+      }
+      return result;
+    } catch (error) {
+      console.error(`Error removing task: ${error}`);
+    }
   }
 
   async deleteUserTasks(email: string): Promise<DeleteResult> {
@@ -207,8 +219,12 @@ export class TasksService {
   }
 
   async deleteTeamTasks(idTeam: string): Promise<void> {
-    if (this.taskModel.find({ id_team: idTeam })){
+    const tasks = await this.taskModel.find({ id_team: idTeam });
+    if (tasks.length > 0){
       await this.taskModel.deleteMany({ id_team: idTeam });
+    }
+    else{
+      throw new NotFoundException('Equipo no tiene tareas');
     }
   }
 }

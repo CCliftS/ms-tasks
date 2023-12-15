@@ -66,6 +66,11 @@ export class TasksController {
     return this.tasksService.getTaskByTeam(id);
   }
 
+  @Get('getTasksTeam/:id')
+  getTasksTeam(@Param('id') id: string) {
+    return this.tasksService.getTasksTeam(id);
+  }
+
   @Delete('removeTask/:id')
   remove(@Param('id') id: string) {
     return this.tasksService.remove(id);
