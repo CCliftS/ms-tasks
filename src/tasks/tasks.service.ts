@@ -108,17 +108,18 @@ export class TasksService {
 
   async updateFinishDate(id: string, newDate: Date): Promise<Task> {
     const task = await this.taskModel.findById(id);
-    if (task && newDate > task.start_date) {
+    if (task && (new Date(newDate) >= new Date(task.start_date))) {
       return await this.taskModel.findOneAndUpdate({ _id: id }, { finish_date: newDate }, { new: true });
     }
     else {
+      console.log('ERROR POR ALGO')
       throw new NotFoundException('Task not found');
     }
   }
 
   async updateStartDate(id: string, newDate: Date): Promise<Task> {
     const task = await this.taskModel.findById(id);
-    if (task && newDate < task.finish_date) {
+    if (task && (new Date(newDate) >= new Date(task.start_date))) {
       return await this.taskModel.findOneAndUpdate({ _id: id }, { start_date: newDate }, { new: true });
     }
     else {
