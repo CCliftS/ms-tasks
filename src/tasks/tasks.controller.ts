@@ -31,6 +31,11 @@ export class TasksController {
     return this.tasksService.updateTeamAndEmailUser(id, id_team, email_user);
   }
 
+  @Put('updateStartDate/:id')
+  updateStartDate(@Param('id') id: string, @Body('newDate') newDate: Date) {
+    return this.tasksService.updateStartDate(id, newDate);
+  }
+
   @Put('updateFinishDate/:id')
   updateFinishDate(@Param('id') id: string, @Body('newDate') newDate: Date) {
     return this.tasksService.updateFinishDate(id, newDate);
