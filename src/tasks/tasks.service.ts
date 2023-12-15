@@ -14,6 +14,15 @@ const GetTeam = async (idTeam: string) => {
   }
 };
 
+const GetTeams = async (idTeams: string []) => {
+  try {
+    const response = axios.get(`${process.env.MS_TEAMS}/Teams/findTeamsByIds/${idTeams.join(',')}`);
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 const GetUser = async (email: string) => {
   try {
     const response = axios.get(`${process.env.MS_USERS}/user/data/${email}`);
@@ -119,7 +128,7 @@ export class TasksService {
 
   async updateTeamAndEmailUser(id: string, newTeam: string, newEmailUser: string): Promise<Task> {
     if (this.taskModel.findById(id) && GetMember(newEmailUser, newTeam)) {
-      return await this.taskModel.findOneAndUpdate({ _id: id }, { id_team: newTeam }, { new: true });
+      return await this.taskModel.findOneAndUpdate({ _id: id }, { id_team: newTeam}, { new: true });
     }
     else {
       throw new NotFoundException('Task not found');
@@ -130,7 +139,7 @@ export class TasksService {
     return await this.taskModel.findByIdAndRemove(id);
   }
 
-  async getProjectTasks(idProject: string): Promise<{ taskId: string[], taskDescription: string[], taskEmailUser: string[], taskFinishDate: Date[], taskIdProject: string[], taskIdTeam: string[], taskName: string[], taskStartDate: Date[], taskStatus: string[] }> {
+  async getProjectTasks(idProject: string): Promise<{ taskId: string[], taskDescription: string[], taskEmailUser: string[], taskFinishDate: Date[], taskIdProject: string[], taskIdTeam: string[], taskTeamName: string[], taskName: string[], taskStartDate: Date[], taskStatus: string[] }> {
     const tasks = await this.taskModel.find({ id_project: idProject });
     const taskId = tasks.map(task => task.id);
     const taskDescription = tasks.map(task => task.description);
@@ -138,13 +147,15 @@ export class TasksService {
     const taskFinishDate = tasks.map(task => task.finish_date);
     const taskIdProject = tasks.map(task => task.id_project);
     const taskIdTeam = tasks.map(task => task.id_team);
+    const taskTeams = (await GetTeams(taskIdTeam)).data;
+    const taskTeamName = taskTeams.map(team => team.nameTeam);
     const taskName = tasks.map(task => task.name);
     const taskStartDate = tasks.map(task => task.start_date);
     const taskStatus = tasks.map(task => task.status);
-    return { taskId, taskDescription, taskEmailUser, taskFinishDate, taskIdProject, taskIdTeam, taskName, taskStartDate, taskStatus };
+    return { taskId, taskDescription, taskEmailUser, taskFinishDate, taskIdProject, taskIdTeam, taskTeamName, taskName, taskStartDate, taskStatus };
   }
 
-  async getTaskByUser(email: string): Promise<{ taskId: string[], taskDescription: string[], taskEmailUser: string[], taskFinishDate: Date[], taskIdProject: string[], taskIdTeam: string[], taskName: string[], taskStartDate: Date[], taskStatus: string[] }> {
+  async getTaskByUser(email: string): Promise<{ taskId: string[], taskDescription: string[], taskEmailUser: string[], taskFinishDate: Date[], taskIdProject: string[], taskIdTeam: string[], taskTeamName: string[], taskName: string[], taskStartDate: Date[], taskStatus: string[] }> {
     if (GetUser(email)) {
       const tasks = await this.taskModel.find({ email_user: email });
       const taskId = tasks.map(task => task.id);
@@ -153,17 +164,20 @@ export class TasksService {
       const taskFinishDate = tasks.map(task => task.finish_date);
       const taskIdProject = tasks.map(task => task.id_project);
       const taskIdTeam = tasks.map(task => task.id_team);
+      const taskTeams = (await GetTeams(taskIdTeam)).data;
+      console.log(taskTeams);
+      const taskTeamName = taskTeams.map(team => team.nameTeam);
       const taskName = tasks.map(task => task.name);
       const taskStartDate = tasks.map(task => task.start_date);
       const taskStatus = tasks.map(task => task.status);
-      return { taskId, taskDescription, taskEmailUser, taskFinishDate, taskIdProject, taskIdTeam, taskName, taskStartDate, taskStatus };
+      return { taskId, taskDescription, taskEmailUser, taskFinishDate, taskIdProject, taskIdTeam, taskTeamName, taskName, taskStartDate, taskStatus };
     }
     else {
       throw new NotFoundException('User not found');
     }
   }
 
-  async getTaskByTeam(idTeam: string): Promise<{ taskId: string[], taskDescription: string[], taskEmailUser: string[], taskFinishDate: Date[], taskIdProject: string[], taskIdTeam: string[], taskName: string[], taskStartDate: Date[], taskStatus: string[] }> {
+  async getTaskByTeam(idTeam: string): Promise<{ taskId: string[], taskDescription: string[], taskEmailUser: string[], taskFinishDate: Date[], taskIdProject: string[], taskIdTeam: string[], taskTeamName: string[], taskName: string[], taskStartDate: Date[], taskStatus: string[] }> {
     if (GetTeam(idTeam)) {
       const tasks = await this.taskModel.find({ id_team: idTeam });
       const taskId = tasks.map(task => task.id);
@@ -172,10 +186,12 @@ export class TasksService {
       const taskFinishDate = tasks.map(task => task.finish_date);
       const taskIdProject = tasks.map(task => task.id_project);
       const taskIdTeam = tasks.map(task => task.id_team);
+      const taskTeams = (await GetTeams(taskIdTeam)).data;
+      const taskTeamName = taskTeams.map(team => team.nameTeam);
       const taskName = tasks.map(task => task.name);
       const taskStartDate = tasks.map(task => task.start_date);
       const taskStatus = tasks.map(task => task.status);
-      return { taskId, taskDescription, taskEmailUser, taskFinishDate, taskIdProject, taskIdTeam, taskName, taskStartDate, taskStatus };
+      return { taskId, taskDescription, taskEmailUser, taskFinishDate, taskIdProject, taskIdTeam, taskTeamName, taskName, taskStartDate, taskStatus };
     }
     else {
       throw new NotFoundException('Team not found');
